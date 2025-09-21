@@ -1,0 +1,284 @@
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+            <path d="M19 15L19.74 17.74L22.5 18.5L19.74 19.26L19 22L18.26 19.26L15.5 18.5L18.26 17.74L19 15Z" fill="currentColor"/>
+            <path d="M5 6L5.5 7.5L7 8L5.5 8.5L5 10L4.5 8.5L3 8L4.5 7.5L5 6Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <h1 class="system-title">Remote Health Monitoring System</h1>
+      </div>
+      
+      <nav class="navigation">
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'Home'"
+          (click)="onTabClick('Home')"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Home
+        </button>
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'Patients'"
+          (click)="onTabClick('Patients')"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45768C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Patients
+        </button>
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'Reports'"
+          (click)="onTabClick('Reports')"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Reports
+        </button>
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'Settings'"
+          (click)="onTabClick('Settings')"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M19.4 15A1.65 1.65 0 0 0 18 14.63A8 8 0 0 0 9.37 6A1.65 1.65 0 0 0 9 4.6A1.65 1.65 0 0 0 7.6 3A1.65 1.65 0 0 0 6.37 4.37A8 8 0 0 0 4.6 9.37A1.65 1.65 0 0 0 3 10.6A1.65 1.65 0 0 0 4.37 11.63A8 8 0 0 0 9.37 15.4A1.65 1.65 0 0 0 10.6 17A1.65 1.65 0 0 0 11.63 15.63A8 8 0 0 0 15.4 19.4A1.65 1.65 0 0 0 17 20.6A1.65 1.65 0 0 0 18.4 19A1.65 1.65 0 0 0 17.63 18.37A8 8 0 0 0 19.4 15Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Settings
+        </button>
+        <button 
+          class="nav-item logout" 
+          (click)="onLogout()"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Logout
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Patient Overview & Vital Signs Section -->
+    <section class="overview-section">
+      <!-- Patient Overview -->
+      <div class="patient-overview">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          PATIENT OVERVIEW
+        </h2>
+        
+        <div class="patient-info">
+          <div class="info-item">
+            <div class="info-icon person">👤</div>
+            <div class="info-content">
+              <span class="info-label">Name:</span>
+              <span class="info-value">{{ patient.name }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon status">📍</div>
+            <div class="info-content">
+              <span class="info-label">Status:</span>
+              <span class="info-value status-active">{{ patient.status }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon location">🧭</div>
+            <div class="info-content">
+              <span class="info-label">Location:</span>
+              <span class="info-value">{{ patient.location }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon time">⏰</div>
+            <div class="info-content">
+              <span class="info-label">Last Update:</span>
+              <span class="info-value">{{ patient.lastUpdate }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon alert">🔔</div>
+            <div class="info-content">
+              <span class="info-label">Emergency Alerts:</span>
+              <span class="info-value" [class.has-alerts]="patient.emergencyAlerts > 0">
+                {{ patient.emergencyAlerts }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vital Signs -->
+      <div class="vital-signs">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          VITAL SIGNS (Live Data)
+        </h2>
+        
+        <div class="vitals-grid">
+          <div class="vital-item">
+            <div class="vital-icon heart">❤️</div>
+            <div class="vital-content">
+              <span class="vital-label">Heart Rate:</span>
+              <span class="vital-value">{{ vitalSigns.heartRate }} bpm</span>
+            </div>
+          </div>
+          
+          <div class="vital-item">
+            <div class="vital-icon temp">🌡️</div>
+            <div class="vital-content">
+              <span class="vital-label">Temperature:</span>
+              <span class="vital-value">{{ vitalSigns.temperature }}°C</span>
+            </div>
+          </div>
+          
+          <div class="vital-item">
+            <div class="vital-icon spo2">💧</div>
+            <div class="vital-content">
+              <span class="vital-label">SpO2:</span>
+              <span class="vital-value">{{ vitalSigns.spO2 }}%</span>
+            </div>
+          </div>
+          
+          <div class="vital-item">
+            <div class="vital-icon fall">🧠</div>
+            <div class="vital-content">
+              <span class="vital-label">Fall Detected:</span>
+              <span class="vital-value" [class.fall-detected]="vitalSigns.fallDetected">
+                {{ vitalSigns.fallDetected ? 'Yes' : 'X' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Battery Status -->
+        <div class="battery-status">
+          <div class="battery-icon">🔋</div>
+          <div class="battery-content">
+            <span class="battery-label">Battery:</span>
+            <span class="battery-value">{{ patient.battery | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Health Metrics Graph Section -->
+    <section class="metrics-section">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M18 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        HEALTH METRICS GRAPH
+      </h2>
+      
+      <div class="graph-controls">
+        <div class="control-group">
+          <label class="control-label">Metric:</label>
+          <select 
+            class="control-select" 
+            [(ngModel)]="selectedMetric"
+            (change)="onMetricChange(selectedMetric)"
+          >
+            <option *ngFor="let metric of metricOptions" [value]="metric">
+              {{ metric }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="control-group">
+          <label class="control-label">Time Range:</label>
+          <select 
+            class="control-select" 
+            [(ngModel)]="selectedTimeRange"
+            (change)="onTimeRangeChange(selectedTimeRange)"
+          >
+            <option *ngFor="let range of timeRangeOptions" [value]="range">
+              {{ range }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="graph-container">
+        <div class="graph-placeholder">
+          <div class="graph-title">Real-time Line Graph Here</div>
+          <div class="graph-data">
+            <div class="data-point" *ngFor="let metric of healthMetrics.slice(-10)">
+              <span class="data-value">{{ metric.value }}{{ getMetricUnit(selectedMetric) }}</span>
+              <span class="data-time">{{ metric.timestamp | date:'HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alert History Section -->
+    <section class="alerts-section">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        ALERT HISTORY
+      </h2>
+      
+      <div class="alerts-table">
+        <div class="table-header">
+          <div class="header-cell">Time</div>
+          <div class="header-cell">Type</div>
+          <div class="header-cell">Status</div>
+          <div class="header-cell">Notes</div>
+        </div>
+        
+        <div class="table-body">
+          <div class="table-row" *ngFor="let alert of alerts">
+            <div class="table-cell">{{ alert.time }}</div>
+            <div class="table-cell">
+              <span class="alert-icon">{{ getAlertIcon(alert.type) }}</span>
+              {{ alert.type }}
+            </div>
+            <div class="table-cell">
+              <span class="status-badge" [class]="'status-' + getStatusColor(alert.status)">
+                {{ alert.status }}
+              </span>
+            </div>
+            <div class="table-cell">{{ alert.notes }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
