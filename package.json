@@ -1,7 +1,7 @@
 {
-  "name": "repo-root-helper",
+  "name": "repo-root-proxy",
   "private": true,
   "scripts": {
-    "vercel-build": "cd frontend && npm ci && npm run vercel-build"
+    "vercel-build": "cd Frontend && npm ci && npm run vercel-build"
   }
 }
