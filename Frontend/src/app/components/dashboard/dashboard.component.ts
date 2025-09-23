@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     location: '',
     lastUpdate: '',
     emergencyAlerts: 0,
-    battery: 0
+    battery: 45
   };
 
   // Vital signs – start empty
@@ -106,9 +106,9 @@ timeRangeOptions: string[] = ['Last Hour', 'Last 24 Hours', 'Last Week', 'Last M
 
     // Update patient metadata
     this.patient.lastUpdate = latest.created_at ?? new Date().toISOString();
-    this.patient.name = 'Patient'; // if you have patient info in DB/backend, map here
+    this.patient.name = 'John Smith'; // if you have patient info in DB/backend, map here
     this.patient.status = 'Active'; // adjust based on backend response
-    this.patient.battery = this.patient.battery > 0 ? this.patient.battery - 0.01 : 0;
+    this.patient.battery = this.patient.battery > 0 ? this.patient.battery - 0.01 : 45;
 
     // Push into healthMetrics
     this.healthMetrics.push({

@@ -22,20 +22,20 @@ public class ThingSpeakService {
     private final String readKey;
     private final String channelId;
     private final String frontendApiToken;
-    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     public ThingSpeakService(WebClient webClient,
                              @Value("${thingspeak.write-key}") String writeKey,
                              @Value("${thingspeak.read-key}") String readKey,
                              @Value("${thingspeak.channel-id}") String channelId,
                              @Value("${app.frontend.api-token}") String frontendApiToken,
-                             EmailService emailService) {
+                             NotificationService notificationService) {
         this.webClient = webClient;
         this.writeKey = writeKey;
         this.readKey = readKey;
         this.channelId = channelId;
         this.frontendApiToken = frontendApiToken;
-        this.emailService = emailService;
+        this.notificationService = notificationService;
     }
 
     public boolean isAuthorized(String authorizationHeader) {
@@ -105,7 +105,7 @@ public class ThingSpeakService {
                         if (feedObj instanceof Map<?, ?> feed) {
                             String field4 = (String) feed.get("field4");
                             if ("1".equals(field4)) {
-                                // Fall detected! Send email notification
+                                // Fall detected! Send notifications (both email and WhatsApp)
                                 String entryId = String.valueOf(feed.get("entry_id"));
                                 String heartRate = (String) feed.get("field1");
                                 String spo2 = (String) feed.get("field2");
@@ -116,11 +116,11 @@ public class ThingSpeakService {
                                                  ", SpO2: " + spo2 + 
                                                  ", Temperature: " + temperature);
                                 
-                                // Send email notification asynchronously
-                                emailService.sendFallDetectionAlert(heartRate, spo2, temperature, entryId)
+                                // Send both email and WhatsApp notifications asynchronously
+                                notificationService.sendFallDetectionAlert(heartRate, spo2, temperature, entryId)
                                     .subscribe(
                                         null,
-                                        error -> System.err.println("Failed to send fall detection email: " + error.getMessage())
+                                        error -> System.err.println("Failed to send fall detection notifications: " + error.getMessage())
                                     );
                             }
                         }

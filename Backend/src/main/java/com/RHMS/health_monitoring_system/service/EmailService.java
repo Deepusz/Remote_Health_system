@@ -15,58 +15,24 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final GmailApiService gmailApiService;
     private final String notificationEmail;
     private final String subject;
+    private final String senderEmail;
 
-    public EmailService(JavaMailSender mailSender,
+    public EmailService(GmailApiService gmailApiService,
                        @Value("${app.fall-detection.notification-email}") String notificationEmail,
-                       @Value("${app.fall-detection.subject}") String subject) {
-        this.mailSender = mailSender;
+                       @Value("${app.fall-detection.subject}") String subject,
+                       @Value("${app.fall-detection.sender-email}") String senderEmail) {
+        this.gmailApiService = gmailApiService;
         this.notificationEmail = notificationEmail;
         this.subject = subject;
+        this.senderEmail = senderEmail;
     }
 
     public Mono<Void> sendFallDetectionAlert(String heartRate, String spo2, String temperature, String entryId) {
-        return Mono.fromRunnable(() -> {
-            try {
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(notificationEmail);
-                message.setSubject(subject);
-                message.setText(buildFallDetectionEmailBody(heartRate, spo2, temperature, entryId));
-                
-                System.out.println("Attempting to send fall detection email to: " + notificationEmail);
-                mailSender.send(message);
-                System.out.println("✅ Fall detection alert email sent successfully to: " + notificationEmail);
-            } catch (Exception e) {
-                System.err.println("❌ Failed to send fall detection email: " + e.getMessage());
-                System.err.println("Error type: " + e.getClass().getSimpleName());
-                if (e.getCause() != null) {
-                    System.err.println("Caused by: " + e.getCause().getMessage());
-                }
-                // Don't rethrow - we want the application to continue even if email fails
-            }
-        })
-        .subscribeOn(Schedulers.boundedElastic())
-        .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                .filter(throwable -> {
-                    // Only retry on connection issues, not authentication issues
-                    String errorMessage = throwable.getMessage().toLowerCase();
-                    return errorMessage.contains("timeout") || 
-                           errorMessage.contains("connection") || 
-                           errorMessage.contains("network") ||
-                           errorMessage.contains("unreachable");
-                })
-                .doBeforeRetry(retrySignal -> 
-                    System.out.println("Retrying email send, attempt: " + retrySignal.totalRetries() + 
-                                     ", error: " + retrySignal.failure().getMessage())))
-        .onErrorResume(throwable -> {
-            System.err.println("🚨 Email sending failed after all retries. Fall detection alert could not be sent!");
-            System.err.println("Final error: " + throwable.getMessage());
-            // Return empty Mono to continue processing even if email fails
-            return Mono.empty();
-        })
-        .then();
+        // Use Gmail API instead of SMTP
+        return gmailApiService.sendFallDetectionAlert(heartRate, spo2, temperature, entryId, notificationEmail);
     }
 
     private String buildFallDetectionEmailBody(String heartRate, String spo2, String temperature, String entryId) {
