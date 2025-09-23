@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiCallerService {
   // Point to your Spring Boot backend
-  private baseUrl = '/api/ts';
+  private baseUrl = environment.apiBase;
 
   // Use the same token you put in application.properties (or fetch from a proper auth flow)
   private apiToken = 'my-local-dev-token';
