@@ -6,7 +6,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -33,14 +35,37 @@ public class EmailService {
                 message.setSubject(subject);
                 message.setText(buildFallDetectionEmailBody(heartRate, spo2, temperature, entryId));
                 
+                System.out.println("Attempting to send fall detection email to: " + notificationEmail);
                 mailSender.send(message);
-                System.out.println("Fall detection alert email sent successfully to: " + notificationEmail);
+                System.out.println("✅ Fall detection alert email sent successfully to: " + notificationEmail);
             } catch (Exception e) {
-                System.err.println("Failed to send fall detection email: " + e.getMessage());
-                e.printStackTrace();
+                System.err.println("❌ Failed to send fall detection email: " + e.getMessage());
+                System.err.println("Error type: " + e.getClass().getSimpleName());
+                if (e.getCause() != null) {
+                    System.err.println("Caused by: " + e.getCause().getMessage());
+                }
+                // Don't rethrow - we want the application to continue even if email fails
             }
         })
         .subscribeOn(Schedulers.boundedElastic())
+        .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                .filter(throwable -> {
+                    // Only retry on connection issues, not authentication issues
+                    String errorMessage = throwable.getMessage().toLowerCase();
+                    return errorMessage.contains("timeout") || 
+                           errorMessage.contains("connection") || 
+                           errorMessage.contains("network") ||
+                           errorMessage.contains("unreachable");
+                })
+                .doBeforeRetry(retrySignal -> 
+                    System.out.println("Retrying email send, attempt: " + retrySignal.totalRetries() + 
+                                     ", error: " + retrySignal.failure().getMessage())))
+        .onErrorResume(throwable -> {
+            System.err.println("🚨 Email sending failed after all retries. Fall detection alert could not be sent!");
+            System.err.println("Final error: " + throwable.getMessage());
+            // Return empty Mono to continue processing even if email fails
+            return Mono.empty();
+        })
         .then();
     }
 
