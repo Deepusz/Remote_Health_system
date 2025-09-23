@@ -23,6 +23,11 @@ public class CorsConfig {
         return (ServerWebExchange exchange, org.springframework.web.server.WebFilterChain chain) -> {
             if (CorsUtils.isCorsRequest(exchange.getRequest())) {
                 ServerHttpResponse response = exchange.getResponse();
+                
+                // Debug logging
+                String origin = exchange.getRequest().getHeaders().getFirst("Origin");
+                String method = exchange.getRequest().getMethod().toString();
+                System.out.println("CORS Request - Origin: " + origin + ", Method: " + method);
 
                 // origin
                 response.getHeaders().setAccessControlAllowOrigin(VERCEL_ORIGIN);
@@ -38,15 +43,35 @@ public class CorsConfig {
                         )
                 );
 
-                // allowed headers (strings)
+                // allowed headers (strings) - including all headers from your request
                 response.getHeaders().setAccessControlAllowHeaders(
-                        List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With")
+                        List.of(
+                                "Authorization", 
+                                "Content-Type", 
+                                "Accept", 
+                                "Origin", 
+                                "X-Requested-With",
+                                "Referer",
+                                "User-Agent",
+                                "sec-ch-ua",
+                                "sec-ch-ua-mobile",
+                                "sec-ch-ua-platform"
+                        )
+                );
+
+                // expose headers for client access
+                response.getHeaders().setAccessControlExposeHeaders(
+                        List.of("Authorization", "Content-Type")
                 );
 
                 response.getHeaders().setAccessControlAllowCredentials(true);
+                
+                // set max age for preflight cache
+                response.getHeaders().setAccessControlMaxAge(3600L);
 
                 // handle preflight
                 if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+                    System.out.println("Handling CORS preflight request");
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
                 }
