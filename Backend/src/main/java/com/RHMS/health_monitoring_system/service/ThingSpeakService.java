@@ -10,6 +10,7 @@ import reactor.util.retry.Retry;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,17 +22,20 @@ public class ThingSpeakService {
     private final String readKey;
     private final String channelId;
     private final String frontendApiToken;
+    private final EmailService emailService;
 
     public ThingSpeakService(WebClient webClient,
                              @Value("${thingspeak.write-key}") String writeKey,
                              @Value("${thingspeak.read-key}") String readKey,
                              @Value("${thingspeak.channel-id}") String channelId,
-                             @Value("${app.frontend.api-token}") String frontendApiToken) {
+                             @Value("${app.frontend.api-token}") String frontendApiToken,
+                             EmailService emailService) {
         this.webClient = webClient;
         this.writeKey = writeKey;
         this.readKey = readKey;
         this.channelId = channelId;
         this.frontendApiToken = frontendApiToken;
+        this.emailService = emailService;
     }
 
     public boolean isAuthorized(String authorizationHeader) {
@@ -84,6 +88,48 @@ public class ThingSpeakService {
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
                         .filter(throwable -> !(throwable instanceof IllegalArgumentException))
                         .doBeforeRetry(retrySignal -> 
-                            System.out.println("Retrying ThingSpeak read, attempt: " + retrySignal.totalRetries())));
+                            System.out.println("Retrying ThingSpeak read, attempt: " + retrySignal.totalRetries())))
+                .flatMap(response -> {
+                    // Check for fall detection in the response
+                    checkForFallDetection(response);
+                    return Mono.just(response);
+                });
+    }
+
+    private void checkForFallDetection(Object response) {
+        try {
+            if (response instanceof Map<?, ?> responseMap) {
+                Object feedsObj = responseMap.get("feeds");
+                if (feedsObj instanceof List<?> feeds) {
+                    for (Object feedObj : feeds) {
+                        if (feedObj instanceof Map<?, ?> feed) {
+                            String field4 = (String) feed.get("field4");
+                            if ("1".equals(field4)) {
+                                // Fall detected! Send email notification
+                                String entryId = String.valueOf(feed.get("entry_id"));
+                                String heartRate = (String) feed.get("field1");
+                                String spo2 = (String) feed.get("field2");
+                                String temperature = (String) feed.get("field3");
+                                
+                                System.out.println("🚨 FALL DETECTED! Entry ID: " + entryId + 
+                                                 ", Heart Rate: " + heartRate + 
+                                                 ", SpO2: " + spo2 + 
+                                                 ", Temperature: " + temperature);
+                                
+                                // Send email notification asynchronously
+                                emailService.sendFallDetectionAlert(heartRate, spo2, temperature, entryId)
+                                    .subscribe(
+                                        null,
+                                        error -> System.err.println("Failed to send fall detection email: " + error.getMessage())
+                                    );
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error checking for fall detection: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

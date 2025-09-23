@@ -1,6 +1,7 @@
 package com.RHMS.health_monitoring_system.controller;
 
 import com.RHMS.health_monitoring_system.service.ThingSpeakService;
+import com.RHMS.health_monitoring_system.service.EmailService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,11 @@ import java.util.Map;
 public class ThingSpeakController {
 
     private final ThingSpeakService tsService;
+    private final EmailService emailService;
 
-    public ThingSpeakController(ThingSpeakService tsService) {
+    public ThingSpeakController(ThingSpeakService tsService, EmailService emailService) {
         this.tsService = tsService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/update")
@@ -78,6 +81,34 @@ public class ThingSpeakController {
                         : "Internal server error: " + ex.getMessage();
                     return Mono.just(ResponseEntity.status(500)
                             .body((Object) Map.of("error", errorMessage, "details", ex.getClass().getSimpleName())));
+                });
+    }
+
+    @PostMapping("/test-fall-detection-email")
+    public Mono<ResponseEntity<Object>> testFallDetectionEmail(
+            @RequestHeader(value = "Authorization", required = false) String authorization,
+            @RequestParam(value = "heartRate", defaultValue = "85") String heartRate,
+            @RequestParam(value = "spo2", defaultValue = "98") String spo2,
+            @RequestParam(value = "temperature", defaultValue = "36.5") String temperature) {
+
+        if (!tsService.isAuthorized(authorization)) {
+            return Mono.just(ResponseEntity.status(401).body((Object) Map.of("error", "Unauthorized")));
+        }
+
+        return emailService.sendFallDetectionAlert(heartRate, spo2, temperature, "TEST-001")
+                .then(Mono.just(ResponseEntity.ok((Object) Map.of(
+                    "message", "Fall detection test email sent successfully",
+                    "testData", Map.of(
+                        "heartRate", heartRate,
+                        "spo2", spo2,
+                        "temperature", temperature,
+                        "entryId", "TEST-001"
+                    )
+                ))))
+                .onErrorResume(ex -> {
+                    ex.printStackTrace();
+                    return Mono.just(ResponseEntity.status(500)
+                            .body((Object) Map.of("error", "Failed to send test email: " + ex.getMessage())));
                 });
     }
 }
