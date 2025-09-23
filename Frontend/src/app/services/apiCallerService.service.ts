@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class ApiCallerService {
   // Point to your Spring Boot backend
-  private baseUrl = environment.apiBase;
+  private baseUrl = `${environment.apiBase}/ts`;
 
   // Use the same token you put in application.properties (or fetch from a proper auth flow)
   private apiToken = 'my-local-dev-token';
