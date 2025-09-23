@@ -25,7 +25,7 @@
           </svg>
           Home
         </button>
-        <button 
+        <!-- <button 
           class="nav-item" 
           [class.active]="activeTab === 'Patients'"
           (click)="onTabClick('Patients')"
@@ -73,7 +73,7 @@
             <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           Logout
-        </button>
+        </button> -->
       </nav>
     </div>
   </header>
@@ -121,7 +121,9 @@
             <div class="info-icon time">⏰</div>
             <div class="info-content">
               <span class="info-label">Last Update:</span>
-              <span class="info-value">{{ patient.lastUpdate }}</span>
+              <span class="info-value">
+                {{ patient.lastUpdate ? (patient.lastUpdate | date:'dd.MM.yyyy, HH:mm:ss':'CET') : '' }}
+              </span>
             </div>
           </div>
           
@@ -234,7 +236,7 @@
       
       <div class="graph-container">
         <div class="graph-placeholder">
-          <div class="graph-title">Real-time Line Graph Here</div>
+          <div class="graph-title">Real-time Data Here</div>
           <div class="graph-data">
             <div class="data-point" *ngFor="let metric of healthMetrics.slice(-10)">
               <span class="data-value">{{ metric.value }}{{ getMetricUnit(selectedMetric) }}</span>
