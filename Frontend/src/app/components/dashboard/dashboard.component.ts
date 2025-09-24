@@ -108,7 +108,7 @@ timeRangeOptions: string[] = ['Last Hour', 'Last 24 Hours', 'Last Week', 'Last M
     this.patient.lastUpdate = latest.created_at ?? new Date().toISOString();
     this.patient.name = 'John Smith'; // if you have patient info in DB/backend, map here
     this.patient.status = 'Active'; // adjust based on backend response
-    this.patient.battery = this.patient.battery > 0 ? this.patient.battery - 0.01 : 100;
+    this.patient.battery = 100;
 
     // Push into healthMetrics
     this.healthMetrics.push({
