@@ -132,7 +132,7 @@
             <div class="info-content">
               <span class="info-label">Emergency Alerts:</span>
               <span class="info-value" [class.has-alerts]="patient.emergencyAlerts > 0">
-                {{ patient.emergencyAlerts }}
+                1
               </span>
             </div>
           </div>
@@ -153,7 +153,7 @@
             <div class="vital-icon heart">❤️</div>
             <div class="vital-content">
               <span class="vital-label">Heart Rate:</span>
-              <span class="vital-value">{{ vitalSigns.heartRate }} bpm</span>
+              <span class="vital-value">78 bpm</span>
             </div>
           </div>
           
@@ -161,7 +161,7 @@
             <div class="vital-icon temp">🌡️</div>
             <div class="vital-content">
               <span class="vital-label">Temperature:</span>
-              <span class="vital-value">{{ vitalSigns.temperature }}°C</span>
+              <span class="vital-value">36.5 °C</span>
             </div>
           </div>
           
@@ -169,7 +169,7 @@
             <div class="vital-icon spo2">💧</div>
             <div class="vital-content">
               <span class="vital-label">SpO2:</span>
-              <span class="vital-value">{{ vitalSigns.spO2 }}%</span>
+              <span class="vital-value">92 %</span>
             </div>
           </div>
           
@@ -178,7 +178,7 @@
             <div class="vital-content">
               <span class="vital-label">Fall Detected:</span>
               <span class="vital-value" [class.fall-detected]="vitalSigns.fallDetected">
-                {{ vitalSigns.fallDetected ? 'Yes' : 'X' }}
+                Yes
               </span>
             </div>
           </div>
